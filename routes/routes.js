@@ -117,6 +117,34 @@ router.post("/auth/register", async (req, res) => {
 });
 
 // Link CRUD endpoints
+
+// Get all links according to users ID
+router.get('/links', async (req, res) => {
+  try {
+    const { userID } = req.body;
+    const query = { userID: { $eq: userID } };
+    const options = {
+      sort: { clicks: 1 },
+    };
+
+    const links = await client.db("urlShortener").collection("Links").find(query, options);
+
+    if (links) {
+      return res.status(200).json(result);
+    } else {
+      return res.status(404).json({
+        status: 404,
+        message: 'No links found.'
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Server error.'
+    });
+  }
+});
+
 // Create a new short URL
 router.post('/shorten', checkToken, async (req, res) => {
   const { originalUrl, userID } = req.body;
