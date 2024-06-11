@@ -126,7 +126,7 @@ router.post('/links', async (req, res) => {
     const links = await client.db("urlShortener").collection("Links");
     const query = { userID: { $eq: userID } };
     const options = {
-      sort: { clicks: 1 },
+      sort: { clicks: -1 },
     };
 
     const result = await links.find(query, options);
