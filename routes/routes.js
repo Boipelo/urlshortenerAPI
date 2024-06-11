@@ -131,8 +131,12 @@ router.post('/links', async (req, res) => {
 
     const result = await links.find(query, options);
 
-    if (result) {
-      return res.status(200).json(result);
+    if ((await links.countDocuments(query)) !== 0) {
+      let temp = []
+      for await (const link of result) {
+        temp.push(link);
+      }
+      return res.status(200).json(temp);
     } else {
       return res.status(404).json({
         status: 404,
