@@ -118,7 +118,7 @@ router.post('/shorten', async (req, res) => {
   res.status(200).json({
     status: 200,
     message: "Short link created successfuly.",
-    data: url
+    data: req.body
   });
 });
 
