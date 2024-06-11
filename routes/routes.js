@@ -132,7 +132,7 @@ router.get('/:shortUrl', async (req, res) => {
       { $inc: { clicks: 1 } },
       { new: true }
     );
-    
+
     if (url) {
       res.redirect(url.originalUrl);
     } else {
@@ -145,7 +145,8 @@ router.get('/:shortUrl', async (req, res) => {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: 'Server error.'
+      message: 'Server error.',
+      data: req.params
     });
   }
 });
