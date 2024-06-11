@@ -122,7 +122,6 @@ router.post("/auth/register", async (req, res) => {
 router.post('/links', checkToken, async (req, res) => {
   try {
     const { userID } = req.body;
-
     const links = await client.db("urlShortener").collection("Links");
     const query = { userID: { $eq: userID } };
     const options = {
