@@ -113,7 +113,7 @@ router.post("/auth/register", async (req, res) => {
 
 // Link CRUD endpoints
 // Create a new short URL
-router.post('/shorten', async (req, res) => {
+router.post('/shorten', checkToken, async (req, res) => {
   const { originalUrl, userID } = req.body;
   const url = new Url({ originalUrl, userID });
   await client.db("urlShortener").collection("Links").insertOne(url);
