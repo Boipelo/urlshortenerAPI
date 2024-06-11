@@ -55,6 +55,7 @@ router.post("/auth/login", async (req, res) => {
     return res.status(200).json({
       status: 200,
       message: "Login Successful.",
+      profile: result._id,
       token: jwt.sign(
         {
           email: result.email,
@@ -87,6 +88,7 @@ router.post("/auth/register", async (req, res) => {
       return res.status(200).json({
         status: 200,
         message: "Registration Successful.",
+        profile: response.insertedId,
         token: jwt.sign(
           {
             email: req.body.email,
