@@ -124,7 +124,7 @@ router.post('/shorten', async (req, res) => {
   });
 });
 
-// Read a URL by short URL
+// Read a short URL and redirect to the original URL
 router.get('/:shortUrl', async (req, res) => {
   try {
     const { shortUrl } = req.params;
@@ -144,7 +144,6 @@ router.get('/:shortUrl', async (req, res) => {
       });
     }
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       status: 500,
       message: 'Server error.'
@@ -156,10 +155,14 @@ router.get('/:shortUrl', async (req, res) => {
 router.put('/:shortUrl', async (req, res) => {
   const { shortUrl } = req.params;
   const { originalUrl } = req.body;
-  const url = await Url.findOneAndUpdate({ shortUrl }, { originalUrl }, { new: true });
+  const url = await client.db("urlShortener").collection("Links")
+    .findOneAndUpdate({ shortUrl }, { originalUrl }, { new: true });
 
   if (url) {
-    res.json(url);
+    res.status(200).json({
+      status: 200,
+      message: "URL updated successfuly."
+    });
   } else {
     return res.status(404).json({
       status: 404,
@@ -171,7 +174,9 @@ router.put('/:shortUrl', async (req, res) => {
 // Delete a URL
 router.delete('/:shortUrl', async (req, res) => {
   const { shortUrl } = req.params;
-  const url = await Url.findOneAndDelete({ shortUrl });
+  const url = await client.db("urlShortener").collection("Links")
+    .findOneAndDelete({ shortUrl });
+
   if (url) {
     return res.status(200).json({
       status: 200,
