@@ -7,6 +7,7 @@ var bcrypt = require("bcryptjs");
 const { MongoClient } = require("mongodb");
 const client = new MongoClient(process.env.DATABASE_URL);
 User = mongoose.model("User");
+Url = mongoose.model("Url");
 
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -23,6 +24,8 @@ const verifyToken = (req, res, next) => {
     next();
   });
 };
+
+// Authentication endpoints
 
 router.post("/auth/login", async (req, res) => {
   const result = await client
@@ -75,7 +78,8 @@ router.post("/auth/register", async (req, res) => {
 
   try {
     if (!result) {
-      await client.db("urlShortener").collection("Users").insertOne(newUser);
+      const response = await client.db("urlShortener").collection("Users").insertOne(newUser);
+      console.log(response);
 
       return res.status(200).json({
         status: 200,
@@ -99,6 +103,49 @@ router.post("/auth/register", async (req, res) => {
       status: 400,
       message: err,
     });
+  }
+});
+
+// Link CRUD endpoints
+// Create a new short URL
+router.post('/shorten', async (req, res) => {
+  const { originalUrl } = req.body;
+  const url = new Url({ originalUrl });
+  await url.save();
+  res.json(url);
+});
+
+// Read a URL by short URL
+router.get('/:shortUrl', async (req, res) => {
+  const { shortUrl } = req.params;
+  const url = await Url.findOne({ shortUrl });
+  if (url) {
+    res.json(url);
+  } else {
+    res.status(404).json('URL not found');
+  }
+});
+
+// Update a URL
+router.put('/:shortUrl', async (req, res) => {
+  const { shortUrl } = req.params;
+  const { originalUrl } = req.body;
+  const url = await Url.findOneAndUpdate({ shortUrl }, { originalUrl }, { new: true });
+  if (url) {
+    res.json(url);
+  } else {
+    res.status(404).json('URL not found');
+  }
+});
+
+// Delete a URL
+router.delete('/:shortUrl', async (req, res) => {
+  const { shortUrl } = req.params;
+  const url = await Url.findOneAndDelete({ shortUrl });
+  if (url) {
+    res.json('URL deleted');
+  } else {
+    res.status(404).json('URL not found');
   }
 });
 
