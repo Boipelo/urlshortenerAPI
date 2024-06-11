@@ -25,6 +25,10 @@ const verifyToken = (req, res, next) => {
   });
 };
 
+router.get("/", async (req, res) => {
+  res.send("Welcome to the URL Shortener API");
+})
+
 // Authentication endpoints
 
 router.post("/auth/login", async (req, res) => {
