@@ -124,10 +124,11 @@ router.post('/shorten', async (req, res) => {
 
 // Read a URL by short URL
 router.get('/:shortUrl', async (req, res) => {
-  // try {
+  try {
     const { shortUrl } = req.params;
 
-    const url = await client.findOneAndUpdate(
+    const url = await client.db("urlShortener").collection("Links")
+    .findOneAndUpdate(
       { shortUrl },
       { $inc: { clicks: 1 } },
       { new: true });
@@ -140,13 +141,13 @@ router.get('/:shortUrl', async (req, res) => {
         message: 'URL not found.'
       });
     }
-  // } catch (error) {
-  //   console.error(error);
-  //   res.status(500).json({
-  //     status: 500,
-  //     message: 'Server error.'
-  //   });
-  // }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: 'Server error.'
+    });
+  }
 });
 
 // Update a URL
