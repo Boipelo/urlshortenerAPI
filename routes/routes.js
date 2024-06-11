@@ -191,7 +191,7 @@ router.get('/:shortUrl', async (req, res) => {
 });
 
 // Update a URL
-router.put('/:shortUrl', async (req, res) => {
+router.put('/:shortUrl', checkToken, async (req, res) => {
   const { shortUrl } = req.params;
   const { originalUrl } = req.body;
   const url = await client.db("urlShortener").collection("Links")
