@@ -195,7 +195,7 @@ router.put('/:shortUrl', async (req, res) => {
   const { shortUrl } = req.params;
   const { originalUrl } = req.body;
   const url = await client.db("urlShortener").collection("Links")
-    .findOneAndUpdate({ shortUrl }, { originalUrl }, { new: true });
+    .findOneAndUpdate({ shortUrl }, { $set: { originalUrl: originalUrl } }, { new: true });
 
   if (url) {
     res.status(200).json({
@@ -211,7 +211,7 @@ router.put('/:shortUrl', async (req, res) => {
 });
 
 // Delete a URL
-router.delete('/:shortUrl', async (req, res) => {
+router.delete('/:shortUrl', checkToken, async (req, res) => {
   const { shortUrl } = req.params;
   const url = await client.db("urlShortener").collection("Links")
     .findOneAndDelete({ shortUrl });
