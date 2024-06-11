@@ -119,7 +119,7 @@ router.post("/auth/register", async (req, res) => {
 // Link CRUD endpoints
 
 // Get all links according to users ID
-router.post('/links', async (req, res) => {
+router.post('/links', checkToken, async (req, res) => {
   try {
     const { userID } = req.body;
 
