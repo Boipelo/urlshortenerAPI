@@ -117,7 +117,8 @@ router.post('/shorten', async (req, res) => {
   const response = await client.db("urlShortener").collection("Links").insertOne(url);
   res.status(200).json({
     status: 200,
-    message: "Short link created successfuly."
+    message: "Short link created successfuly.",
+    data: url
   });
 });
 
