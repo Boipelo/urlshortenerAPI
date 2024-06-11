@@ -124,14 +124,13 @@ router.post('/shorten', async (req, res) => {
 
 // Read a URL by short URL
 router.get('/:shortUrl', async (req, res) => {
-  const { shortUrl } = req.params;
-
   try {
+    const { shortUrl } = req.params;
+
     const url = await client.findOneAndUpdate(
       { shortUrl },
       { $inc: { clicks: 1 } },
-      { new: true }
-    );
+      { new: true });
 
     if (url) {
       res.redirect(url.originalUrl);
@@ -145,8 +144,7 @@ router.get('/:shortUrl', async (req, res) => {
     console.error(error);
     res.status(500).json({
       status: 500,
-      message: 'Server error.',
-      data: req.params
+      message: 'Server error.'
     });
   }
 });
