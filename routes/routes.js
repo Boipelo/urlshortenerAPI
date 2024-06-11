@@ -121,14 +121,14 @@ router.post("/auth/register", async (req, res) => {
 // Get all links according to users ID
 router.post('/links', checkToken, async (req, res) => {
   try {
-    const { userID } = req.body;
-    const links = await client.db("urlShortener").collection("Links");
+    const { userID } = await req.body;
+    const links = client.db("urlShortener").collection("Links");
     const query = { userID: { $eq: userID } };
     const options = {
       sort: { clicks: -1 },
     };
 
-    const result = await links.find(query, options);
+    const result = links.find(query, options);
 
     if ((await links.countDocuments(query)) !== 0) {
       let temp = []
@@ -158,7 +158,8 @@ router.post('/shorten', checkToken, async (req, res) => {
 
   return res.status(200).json({
     status: 200,
-    message: "Short link created successfuly."
+    message: "Short link created successfuly.",
+    data: url
   });
 });
 
