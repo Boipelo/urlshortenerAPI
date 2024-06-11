@@ -9,7 +9,7 @@ const client = new MongoClient(process.env.DATABASE_URL);
 User = mongoose.model("User");
 Url = mongoose.model("Url");
 
-const verifyToken = (req, res, next) => {
+const checkToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
     res.status(401).send("Authentication Required.");
@@ -26,7 +26,7 @@ const verifyToken = (req, res, next) => {
 };
 
 router.get("/", async (req, res) => {
-  return res.send("Welcome to the URL Shortener API");
+  return res.send("Welcome to the URL Shortener API.");
 })
 
 // Authentication endpoints
@@ -88,6 +88,7 @@ router.post("/auth/register", async (req, res) => {
       return res.status(200).json({
         status: 200,
         message: "Registration Successful.",
+        response: response,
         token: jwt.sign(
           {
             email: req.body.email,
