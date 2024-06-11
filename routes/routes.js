@@ -130,13 +130,13 @@ router.get('/:shortUrl', async (req, res) => {
     const { shortUrl } = req.params;
 
     const url = await client.db("urlShortener").collection("Links")
-    .findOneAndUpdate(
-      { shortUrl },
-      { $inc: { clicks: 1 } },
-      { new: true });
+      .findOneAndUpdate(
+        { shortUrl },
+        { $inc: { clicks: 1 } },
+        { new: true });
 
     if (url) {
-      res.redirect(url.originalUrl);
+      return res.redirect(url.originalUrl);
     } else {
       return res.status(404).json({
         status: 404,
@@ -145,7 +145,7 @@ router.get('/:shortUrl', async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       status: 500,
       message: 'Server error.'
     });
@@ -157,10 +157,14 @@ router.put('/:shortUrl', async (req, res) => {
   const { shortUrl } = req.params;
   const { originalUrl } = req.body;
   const url = await Url.findOneAndUpdate({ shortUrl }, { originalUrl }, { new: true });
+
   if (url) {
     res.json(url);
   } else {
-    res.status(404).json('URL not found');
+    return res.status(404).json({
+      status: 404,
+      message: 'URL not found.'
+    });
   }
 });
 
@@ -169,9 +173,15 @@ router.delete('/:shortUrl', async (req, res) => {
   const { shortUrl } = req.params;
   const url = await Url.findOneAndDelete({ shortUrl });
   if (url) {
-    res.json('URL deleted');
+    return res.status(200).json({
+      status: 200,
+      message: 'URL deleted successfuly.'
+    });
   } else {
-    res.status(404).json('URL not found');
+    return res.status(404).json({
+      status: 404,
+      message: 'URL not found.'
+    });
   }
 });
 
