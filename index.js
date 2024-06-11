@@ -9,6 +9,7 @@ Url = require("./models/url");
 
 const uri = process.env.DATABASE_URL;
 const routes = require("./routes/routes");
+const nocache = require('nocache');
 const app = express();
 const port = 5500;
 
@@ -36,6 +37,7 @@ run().catch(console.dir);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(nocache());
 app.use(cors()); // Not to be used in production without whitelist.
 
 // app.use(function (req, res, next) {
