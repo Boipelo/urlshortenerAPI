@@ -114,22 +114,39 @@ router.post("/auth/register", async (req, res) => {
 router.post('/shorten', async (req, res) => {
   const { originalUrl, userID } = req.body;
   const url = new Url({ originalUrl, userID });
-  const response = await client.db("urlShortener").collection("Links").insertOne(url);
-  res.status(200).json({
+  await client.db("urlShortener").collection("Links").insertOne(url);
+
+  return res.status(200).json({
     status: 200,
-    message: "Short link created successfuly.",
-    data: req.body
+    message: "Short link created successfuly."
   });
 });
 
 // Read a URL by short URL
 router.get('/:shortUrl', async (req, res) => {
   const { shortUrl } = req.params;
-  const url = await Url.findOne({ shortUrl });
-  if (url) {
-    res.json(url);
-  } else {
-    res.status(404).json('URL not found');
+
+  try {
+    const url = await client.findOneAndUpdate(
+      { shortUrl },
+      { $inc: { clicks: 1 } },
+      { new: true }
+    );
+    
+    if (url) {
+      res.redirect(url.originalUrl);
+    } else {
+      return res.status(404).json({
+        status: 404,
+        message: 'URL not found.'
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      message: 'Server error.'
+    });
   }
 });
 
