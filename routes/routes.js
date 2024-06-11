@@ -83,16 +83,14 @@ router.post("/auth/register", async (req, res) => {
   try {
     if (!result) {
       const response = await client.db("urlShortener").collection("Users").insertOne(newUser);
-      console.log(response);
 
       return res.status(200).json({
         status: 200,
         message: "Registration Successful.",
-        response: response,
         token: jwt.sign(
           {
             email: req.body.email,
-            _id: newUser._id,
+            _id: response.insertedId,
           },
           `${process.env.SECRET_KEY}`
         ),
@@ -114,10 +112,13 @@ router.post("/auth/register", async (req, res) => {
 // Link CRUD endpoints
 // Create a new short URL
 router.post('/shorten', async (req, res) => {
-  const { originalUrl } = req.body;
-  const url = new Url({ originalUrl });
-  await url.save();
-  res.json(url);
+  const { originalUrl, userID } = req.body;
+  const url = new Url({ originalUrl, userID });
+  const response = await client.db("urlShortener").collection("Links").insertOne(url);
+  res.status(200).json({
+    status: 200,
+    message: "Short link created successfuly."
+  });
 });
 
 // Read a URL by short URL
