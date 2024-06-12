@@ -39,28 +39,6 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(nocache());
 app.use(cors()); // Not to be used in production without whitelist.
-
-// app.use(function (req, res, next) {
-//   if (
-//     req.headers &&
-//     req.headers.authorization &&
-//     req.headers.authorization.split(" ")[0] === "Bearer"
-//   ) {
-//     jsonwebtoken.verify(
-//       req.headers.authorization.split(" ")[1],
-//       `${process.env.SECRET_KEY}`,
-//       function (err, decode) {
-//         if (err) req.user = undefined;
-//         req.user = decode;
-//         next();
-//       }
-//     );
-//   } else {
-//     req.user = undefined;
-//     next();
-//   }
-// });
-
 app.use("/api", routes);
 
 app.listen(port, () => {
