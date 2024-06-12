@@ -208,7 +208,7 @@ router.put('/:shortUrl', checkToken, async (req, res) => {
   const { shortUrl } = req.params;
   const { originalUrl } = req.body;
   const url = await client.db("urlShortener").collection("Links")
-    .findOneAndUpdate({ shortUrl }, { $set: { originalUrl: originalUrl, modifiedDate: Date.now } }, { returnNewDocument: true });
+    .findOneAndUpdate({ shortUrl }, { $set: { originalUrl: originalUrl, modifiedDate: Date.now } }, { returnDocument: "after" });
 
   if (url) {
     res.status(200).json({
