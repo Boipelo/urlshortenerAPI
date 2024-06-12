@@ -70,9 +70,9 @@ router.post("/auth/login", async (req, res) => {
       ),
     });
   } catch (err) {
-    return res.status(400).json({
-      status: 400,
-      message: err,
+    return res.status(500).json({
+      status: 500,
+      message: "Server error.",
     });
   }
 });
@@ -109,9 +109,9 @@ router.post("/auth/register", async (req, res) => {
       });
     }
   } catch (err) {
-    return res.status(400).json({
-      status: 400,
-      message: err,
+    return res.status(500).json({
+      status: 500,
+      message: "Server error.",
     });
   }
 });
@@ -135,7 +135,12 @@ router.post('/links', checkToken, async (req, res) => {
       for await (const link of result) {
         temp.push(link);
       }
-      return res.status(200).json(temp);
+
+      return res.status(200).json({
+        status: 200,
+        message: "Link fetch succesful.",
+        data: temp
+      });
     } else {
       return res.status(404).json({
         status: 404,
@@ -152,15 +157,23 @@ router.post('/links', checkToken, async (req, res) => {
 
 // Create a new short URL
 router.post('/shorten', checkToken, async (req, res) => {
-  const { originalUrl, userID } = req.body;
-  const url = new Url({ originalUrl, userID });
-  await client.db("urlShortener").collection("Links").insertOne(url);
+  try {
+    const { originalUrl, userID } = req.body;
+    const url = new Url({ originalUrl, userID });
+    await client.db("urlShortener").collection("Links").insertOne(url);
 
-  return res.status(200).json({
-    status: 200,
-    message: "Short link created successfuly.",
-    data: url
-  });
+    return res.status(200).json({
+      status: 200,
+      message: "Short link created successfuly.",
+      data: url
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: 'Server error.'
+    });
+  }
+
 });
 
 // Read a short URL and redirect to the original URL
@@ -200,7 +213,8 @@ router.put('/:shortUrl', checkToken, async (req, res) => {
   if (url) {
     res.status(200).json({
       status: 200,
-      message: "URL updated successfuly."
+      message: "URL updated successfuly.",
+      data: url
     });
   } else {
     return res.status(404).json({
