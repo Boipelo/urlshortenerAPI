@@ -9,6 +9,19 @@ const client = new MongoClient(process.env.DATABASE_URL);
 User = mongoose.model("User");
 Url = mongoose.model("Url");
 
+/**
+ * API Endpoints - Database Used: MongoDB
+ * The below end points service the following functionality:
+ * 1. checkToken (function) - this is to verify the validity of the issued JWT.
+ * 2. GET "/" (endpoint) - this is the default entry point. No functionality is provided here.
+ * 3. POST "/auth/login" (endpoint) - this route provides user login functionality
+ * 4. POST "/auth/register" (endpoint) - this route provides user registration functionality
+ * 5. POST "/links" (endpoint) - this route provides all links shortened by a particular user. i.e they will only see their links.
+ * 6. GET "/:shortUrl" (endpoint) - this route provides the redirect functionality of a short link. The 
+ *    short link is used as an ID to query the database and redirect to the original URL.
+ * 7. PUT "/:shortUrl" (endpoint) - this route provides update functionality of the original URL using the short URL as an ID.
+ * 8. DELETE "/:shortUrl" (endpoint) - this route provides deleting functionality of the original URL object using the short URL as an ID.
+ */
 const checkToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
